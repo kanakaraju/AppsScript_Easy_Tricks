@@ -1,0 +1,20 @@
+<script>
+  /*
+  *THIS FUNCTION CALLS THE getData() FUNCTION IN THE Code.gs FILE
+  using Javascript - DOM Elements append
+  */
+google.script.run.withSuccessHandler(data => {
+  var test=document.createElement('section');
+  test.setAttribute('id','test');
+  var ul=document.createElement('ul');
+  document.body.appendChild(test);
+  test.appendChild(ul);
+  for (var i=0; i<data.length; i++){
+      var li=document.createElement('li');
+      ul.appendChild(li);
+      li.innerHTML=li.innerHTML + data[i]["Name"];
+      li.innerHTML=li.innerHTML +'<br>'+ data[i]["Email"];
+
+  }
+}).getData();
+</script>
