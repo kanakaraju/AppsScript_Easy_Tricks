@@ -1,0 +1,46 @@
+
+<style>
+    .btn-purple {
+    color: #fff;
+    background-color: #6f42c1;
+    border-color: #643ab0;
+}
+.modal-body {
+    position: relative;
+    padding: 0px;
+}
+a {cursor: pointer;}
+iframe {width: 598px; height: 300px;}
+.modal-body div{float:left; width: 100%}
+.modal-body div p{float:left; width: 20%; font-weight: 600;}
+.modal-body div span{float:left; width: 80%}
+</style>
+<script>
+  /*
+  *THIS FUNCTION CALLS THE getData() FUNCTION IN THE Code.gs FILE
+  DataTables is a plug-in for the jQuery Javascript library. It is a highly flexible tool, built upon the foundations of progressive enhancement, that adds all of these advanced features to any HTML table.
+  Using HTML iframe tag we can display
+  */
+    google.script.run.withSuccessHandler(data => {
+    //data response and columns titles
+    $('#data-table').dataTable({
+        data: data, 
+        columns: [
+            { title: '#' },
+            { title: 'Name'},
+            { title: 'Video'}
+        ]
+    });
+    //Video Popup using iframe - youtube links or google drive links etc.,
+    var table = $('#data-table').DataTable();
+    $('#data-table tbody').on('click', 'tr td:first-child', function () {
+        $(".modal-body .modulename").html("");
+        $(".modal-body .traininglink").html("");
+        $(".modulename").html("<h5>"+table.row(this).data()[1]+"</h5");
+        $(".traininglink").html("<iframe src="+table.row(this).data()[2]+"></iframe>");
+        $("#myModal").modal("show");
+    });
+
+    }).getData();
+
+</script>
