@@ -1,0 +1,101 @@
+<script>
+  //form submit
+  function preventFormSubmit() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+  window.addEventListener('load', preventFormSubmit);
+  //form success and failure
+  function handleFormSubmit(formObject){
+    google.script.run.withSuccessHandler(updateUrl).withFailureHandler(onFailure).uploadFiles(formObject); 
+    $("#myForm").LoadingOverlay("show", {
+        background  : "rgba(0, 0, 0, 0.5)"
+    });
+    $("#myForm").LoadingOverlay("show");
+  }
+
+  //clear method
+  function myGreeting() {
+    document.getElementById('output').innerHTML = "";
+    document.getElementById('fileDocument').innerHTML = "";
+    document.getElementById('fileMedia').innerHTML = "";
+  }
+
+  //success message
+  function updateUrl(url) {
+    var div = document.getElementById('output');
+    if(isValidURL(url)){
+      div.innerHTML = '<div class="alert alert-success" role="alert"><a href="' + url + '">Data uloaded successfully!</a></div>';
+      $("#myForm").LoadingOverlay("hide", true);
+      document.getElementById('message').value = '';
+      document.getElementById("myForm").reset();
+    }else{
+      //Show warning message if file is not uploaded or provided
+      div.innerHTML = '<div class="alert alert-danger" role="alert">'+ url +'!</div>';
+    }
+    //timeout method
+    setTimeout(myGreeting, 5000);
+  }
+
+  //failure method
+  function onFailure(error) {
+    var div = document.getElementById('output');
+    div.innerHTML = '<div class="alert alert-danger" role="alert">'+ error.message +'!</div>';
+  }
+
+  //validation https path
+  function isValidURL(string) {
+    var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    return (res !== null);
+  }
+
+  //document validation must file size 2mb if condition updated file size
+  function fileValidationDoc() {
+      var fileInput = document.getElementById('FormControlFile'); 
+      var sizedoc = (fileInput.files[0].size / 1024 / 1024).toFixed(2);
+      var filePath = fileInput.value;
+      // Allowing file type
+      var allowedExtensions = /(\.doc|\.docx|\.pdf)$/i;
+      if (!allowedExtensions.exec(filePath)) {
+          document.getElementById('fileDocument').innerHTML = '<div class="alert alert-danger" role="alert">Invalid file type upload : doc or pdf</div>';
+          fileInput.value = '';
+          return false;
+      } else if (sizedoc > 2) {
+          document.getElementById('fileDocument').innerHTML = '<div class="alert alert-danger" role="alert">File must be below 2 MB</div>';
+          fileInput.value = '';
+          return false;
+          setTimeout(myGreeting, 5000);
+      } else {
+          document.getElementById('fileDocument').innerHTML = "";
+          //$("#fileMedia").html('<b>' +'This file size is: ' + size + " MB" + '</b>');
+      }
+  }
+
+  //images and videos file size validation images jpg, png and m4 must 2mb size condition updated
+  function fileValidationMedia() {
+      var fileMedia = document.getElementById('FormControlFileMedia');
+      var filePathMedia = fileMedia.value;
+      var size = (fileMedia.files[0].size / 1024 / 1024).toFixed(2);
+      var allowedExtensionsMedia = /(\.jpg|\.png|\.mp4)$/i;
+
+      if (!allowedExtensionsMedia.exec(filePathMedia)) {
+        document.getElementById('fileMedia').innerHTML = '<div class="alert alert-danger" role="alert">Invalid file type upload : jpg, png or mp4</div>';
+            fileMedia.value = '';
+            return false;
+      } else if (size > 2) {
+            //alert("File must be between the size of 2-4 MB");
+          document.getElementById('fileMedia').innerHTML = '<div class="alert alert-danger" role="alert">File must be below 2 MB</div>';
+          fileMedia.value = '';
+          return false;
+          setTimeout(myGreeting, 5000);
+      } else {
+          document.getElementById('fileMedia').innerHTML = "";
+          //$("#fileMedia").html('<b>' +'This file size is: ' + size + " MB" + '</b>');
+      }
+  }
+
+</script>
